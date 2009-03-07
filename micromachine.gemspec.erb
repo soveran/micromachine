@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'micromachine'
-  s.version = '0.0.1'
+  s.version = '0.0.2'
   s.summary = %{Minimal Finite State Machine.}
   s.date = %q{2009-03-07}
   s.author = "Michel Martens"
