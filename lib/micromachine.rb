@@ -24,7 +24,6 @@ class MicroMachine
 
   def fire event
     if events[event][@state]
-      yield if block_given?
       @state = events[event][@state]
     end
   end

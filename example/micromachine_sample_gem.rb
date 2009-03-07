@@ -8,18 +8,18 @@ fsm.events[:reset]    = { :confirmed => :pending, :ignored => :pending }
 
 puts "Should print Confirmed, Reset and Ignored."
 
-fsm.fire(:confirm) do
+if fsm.fire(:confirm)
   puts "Confirmed"
 end
 
-fsm.fire(:ignore) do
+if fsm.fire(:ignore)
   puts "Ignored"
 end
 
-fsm.fire(:reset) do
+if fsm.fire(:reset)
   puts "Reset"
 end
 
-fsm.fire(:ignore) do
+if fsm.fire(:ignore)
   puts "Ignored"
 end

@@ -18,10 +18,6 @@ Minimal Finite State Machine.
   fsm.fire(:reset)    #=> true
   fsm.fire(:ignore)   #=> true
 
-  fsm.fire(:reset) do
-    puts "Executed only if the transition succeeds"
-  end
-
 == Installation
 
   $ gem sources -a http://gems.github.com (you only have to do this once)
