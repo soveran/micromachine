@@ -19,13 +19,13 @@ class MicroMachine
 
   def initialize initial_state
     @state = initial_state
-    @events = Hash.new { |hash, key| hash[:key] = [] }
+    @events = Hash.new
   end
 
   def fire event
-    if new_state = events[event][@state]
+    if events[event][@state]
       yield if block_given?
-      @state = new_state
+      @state = events[event][@state]
     end
   end
 end
