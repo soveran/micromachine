@@ -1,0 +1,31 @@
+= MicroMachine
+
+Minimal Finite State Machine.
+
+== Usage
+
+
+  require 'micromachine'
+
+  fsm = MicroMachine.new(:new) # Initial state.
+
+  fsm.events[:confirm] = { :new => :confirmed }
+  fsm.events[:ignore] = { :new => :ignored }
+  fsm.events[:reset] = { :confirmed => :new, :ignored => :new }
+
+  fsm.fire(:confirm)  #=> true
+  fsm.fire(:ignore)   #=> false
+  fsm.fire(:reset)    #=> true
+  fsm.fire(:ignore)   #=> true
+
+  fsm.fire(:reset) do
+    puts "Executed only if the transition succeeds"
+  end
+
+== Installation
+
+  $ gem sources -a http://gems.github.com (you only have to do this once)
+  $ sudo gem install soveran-micromachine
+
+Copyright (c) 2009 Michel Martens.
+Released under the MIT license.
