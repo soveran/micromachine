@@ -2,16 +2,16 @@
 #
 # Usage:
 #
-#   fsm = MicroMachine.new(:new) # Initial state.
+#   machine = MicroMachine.new(:new) # Initial state.
 #
-#   fsm.transitions_for[:confirm] = { :new => :confirmed }
-#   fsm.transitions_for[:ignore] = { :new => :ignored }
-#   fsm.transitions_for[:reset] = { :confirmed => :new, :ignored => :new }
+#   machine.transitions_for[:confirm] = { :new => :confirmed }
+#   machine.transitions_for[:ignore]  = { :new => :ignored }
+#   machine.transitions_for[:reset]   = { :confirmed => :new, :ignored => :new }
 #
-#   fsm.trigger(:confirm)  #=> true
-#   fsm.trigger(:ignore)   #=> false
-#   fsm.trigger(:reset)    #=> true
-#   fsm.trigger(:ignore)   #=> true
+#   machine.trigger(:confirm)  #=> true
+#   machine.trigger(:ignore)   #=> false
+#   machine.trigger(:reset)    #=> true
+#   machine.trigger(:ignore)   #=> true
 #
 class MicroMachine
   attr :transitions_for

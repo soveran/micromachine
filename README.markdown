@@ -19,16 +19,16 @@ Usage
 
     require 'micromachine'
 
-    fsm = MicroMachine.new(:new) # Initial state.
+    machine = MicroMachine.new(:new) # Initial state.
 
-    fsm.transitions_for[:confirm] = { :new => :confirmed }
-    fsm.transitions_for[:ignore]  = { :new => :ignored }
-    fsm.transitions_for[:reset]   = { :confirmed => :new, :ignored => :new }
+    machine.transitions_for[:confirm] = { :new => :confirmed }
+    machine.transitions_for[:ignore]  = { :new => :ignored }
+    machine.transitions_for[:reset]   = { :confirmed => :new, :ignored => :new }
 
-    fsm.fire(:confirm)  #=> true
-    fsm.fire(:ignore)   #=> false
-    fsm.fire(:reset)    #=> true
-    fsm.fire(:ignore)   #=> true
+    machine.trigger(:confirm)  #=> true
+    machine.trigger(:ignore)   #=> false
+    machine.trigger(:reset)    #=> true
+    machine.trigger(:ignore)   #=> true
 
 Installation
 ------------
