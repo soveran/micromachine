@@ -4,27 +4,27 @@
 #
 #   fsm = MicroMachine.new(:new) # Initial state.
 #
-#   fsm.events[:confirm] = { :new => :confirmed }
-#   fsm.events[:ignore] = { :new => :ignored }
-#   fsm.events[:reset] = { :confirmed => :new, :ignored => :new }
+#   fsm.transitions_for[:confirm] = { :new => :confirmed }
+#   fsm.transitions_for[:ignore] = { :new => :ignored }
+#   fsm.transitions_for[:reset] = { :confirmed => :new, :ignored => :new }
 #
-#   fsm.fire(:confirm)  #=> true
-#   fsm.fire(:ignore)   #=> false
-#   fsm.fire(:reset)    #=> true
-#   fsm.fire(:ignore)   #=> true
+#   fsm.trigger(:confirm)  #=> true
+#   fsm.trigger(:ignore)   #=> false
+#   fsm.trigger(:reset)    #=> true
+#   fsm.trigger(:ignore)   #=> true
 #
 class MicroMachine
-  attr :events
+  attr :transitions_for
   attr :state
 
   def initialize initial_state
     @state = initial_state
-    @events = Hash.new
+    @transitions_for = Hash.new
   end
 
-  def fire event
-    if events[event][@state]
-      @state = events[event][@state]
+  def trigger event
+    if transitions_for[event][@state]
+      @state = transitions_for[event][@state]
     end
   end
 end

@@ -1,24 +1,24 @@
 require File.join(File.dirname(__FILE__), '../lib/micromachine')
 
 fsm = MicroMachine.new(:pending)
-fsm.events[:confirm]  = { :pending => :confirmed }
-fsm.events[:ignore]   = { :pending => :ignored }
-fsm.events[:reset]    = { :confirmed => :pending, :ignored => :pending }
+fsm.transitions_for[:confirm]  = { :pending => :confirmed }
+fsm.transitions_for[:ignore]   = { :pending => :ignored }
+fsm.transitions_for[:reset]    = { :confirmed => :pending, :ignored => :pending }
 
 puts "Should print Confirmed, Reset and Ignored."
 
-if fsm.fire(:confirm)
+if fsm.trigger(:confirm)
   puts "Confirmed"
 end
 
-if fsm.fire(:ignore)
+if fsm.trigger(:ignore)
   puts "Ignored"
 end
 
-if fsm.fire(:reset)
+if fsm.trigger(:reset)
   puts "Reset"
 end
 
-if fsm.fire(:ignore)
+if fsm.trigger(:ignore)
   puts "Ignored"
 end
