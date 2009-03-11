@@ -7,13 +7,18 @@ gem_spec_file = 'micromachine.gemspec'
 
 gem_spec = eval(File.read(gem_spec_file)) rescue nil
 
+task :default => :test
+
+Rake::TestTask.new(:test) do |t|
+  t.pattern = 'test/**/*_test.rb'
+  t.verbose = false
+end
+
 Rake::GemPackageTask.new(gem_spec) do |pkg|
   pkg.need_zip = false
   pkg.need_tar = false
   rm_f FileList['pkg/**/*.*']
 end if gem_spec
-
-task :default => :gem
 
 desc "Generate the gemspec file."
 task :gemspec do
