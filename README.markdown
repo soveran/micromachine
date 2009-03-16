@@ -30,6 +30,12 @@ Usage
     machine.trigger(:reset)    #=> true
     machine.trigger(:ignore)   #=> true
 
+It can also have callbacks when entering some state:
+
+    machine.on(:confirmed) do
+      puts "Confirmed"
+    end
+
 Installation
 ------------
 
