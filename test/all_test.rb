@@ -1,6 +1,6 @@
 require 'test/unit'
 require 'rubygems'
-require 'shoulda'
+require 'contest'
 
 require File.dirname(__FILE__) + "/../lib/micromachine"
 
