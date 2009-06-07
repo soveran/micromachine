@@ -36,11 +36,56 @@ It can also have callbacks when entering some state:
       puts "Confirmed"
     end
 
+Adding MicroMachine to your models
+----------------------------------
+
+The most popular pattern among Ruby libraries that tackle this problem
+is to extend the model and transform it into a finite state machine.
+Instead of working as a mixin, MicroMachine's implementation is by
+composition: you instantiate a finite state machine (or many!) inside
+your model and you are in charge of querying and persisting the state.
+Here's an example of how to use it with an ActiveRecord model:
+
+    class Event < ActiveRecord::Base
+      before_save :persist_confirmation
+
+      def confirm!
+        confirmation.trigger(:confirm)
+      end
+
+      def cancel!
+        confirmation.trigger(:cancel)
+      end
+
+      def reset!
+        confirmation.trigger(:reset)
+      end
+
+      def confirmation
+        @confirmation ||= begin
+          @confirmation = MicroMachine.new(confirmation_state || "pending")
+          @confirmation.transitions_for[:confirm] = { "pending" => "confirmed" }
+          @confirmation.transitions_for[:cancel] = { "confirmed" => "cancelled" }
+          @confirmation.transitions_for[:reset] = { "confirmed" => "pending", "cancelled" => "pending" }
+          @confirmation
+        end
+      end
+
+    private
+
+      def persist_confirmation
+        self.confirmation_state = confirmation.state
+      end
+    end
+
+This example asumes you have a :confirmation_state attribute in your
+model. This may look like a very verbose implementation, but you gain a
+lot in flexibility.
+
 Installation
 ------------
 
-    $ gem sources -a http://gems.github.com (you only have to do this once)
-    $ sudo gem install soveran-micromachine
+    $ sudo gem install micromachine
 
 License
 -------
