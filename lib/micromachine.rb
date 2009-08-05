@@ -13,10 +13,14 @@ class MicroMachine
   end
 
   def trigger event
-    if transitions_for[event][@state]
+    if trigger?(event)
       @state = transitions_for[event][@state]
       @callbacks[@state].each { |callback| callback.call }
       true
     end
+  end
+
+  def trigger?(event)
+    transitions_for[event][state]
   end
 end
