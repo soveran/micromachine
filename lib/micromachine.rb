@@ -1,4 +1,6 @@
 class MicroMachine
+  InvalidEvent = Class.new(NoMethodError)
+
   attr :transitions_for
   attr :state
 
@@ -22,5 +24,7 @@ class MicroMachine
 
   def trigger?(event)
     transitions_for[event][state]
+  rescue NoMethodError
+    raise InvalidEvent
   end
 end

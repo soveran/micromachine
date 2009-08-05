@@ -34,6 +34,12 @@ class MicroMachineTest < Test::Unit::TestCase
       assert @machine.trigger(:ignore)
       assert_equal :ignored, @machine.state
     end
+
+    should "raise an error if an invalid event is triggered" do
+      assert_raise MicroMachine::InvalidEvent do
+        @machine.trigger(:random_event)
+      end
+    end
   end
 
   context "dealing with callbacks" do
