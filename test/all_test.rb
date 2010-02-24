@@ -52,20 +52,25 @@ class MicroMachineTest < Test::Unit::TestCase
       @machine.on(:pending)   { @state = "Pending" }
       @machine.on(:confirmed) { @state = "Confirmed" }
       @machine.on(:ignored)   { @state = "Ignored" }
+      @machine.on(:any)       { @last_transition = @state}
     end
 
     should "execute callbacks when entering a state" do
       @machine.trigger(:confirm)
       assert_equal "Confirmed", @state
+      assert_equal "Confirmed", @last_transition
 
       @machine.trigger(:ignore)
       assert_equal "Confirmed", @state
+      assert_equal "Confirmed", @last_transition
 
       @machine.trigger(:reset)
       assert_equal "Pending", @state
+      assert_equal "Pending", @last_transition
 
       @machine.trigger(:ignore)
       assert_equal "Ignored", @state
+      assert_equal "Ignored", @last_transition
     end
   end
 end
