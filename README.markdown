@@ -36,6 +36,12 @@ It can also have callbacks when entering some state:
       puts "Confirmed"
     end
 
+Or callbacks on any transition:
+
+    machine.on(:any) do
+      puts "Transitioned..."
+    end
+
 Adding MicroMachine to your models
 ----------------------------------
 
