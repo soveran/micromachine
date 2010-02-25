@@ -8,7 +8,6 @@ class MicroMachine
     @state = initial_state
     @transitions_for = Hash.new
     @callbacks = Hash.new { |hash, key| hash[key] = [] }
-    @callbacks[:any] = []
   end
 
   def on key, &block
@@ -18,8 +17,8 @@ class MicroMachine
   def trigger event
     if trigger?(event)
       @state = transitions_for[event][@state]
-      @callbacks[@state].each { |callback| callback.call }
-      @callbacks[:any].each { |callback| callback.call }
+      callbacks = @callbacks[@state] + @callbacks[:any]
+      callbacks.each { |callback| callback.call }
       true
     end
   end

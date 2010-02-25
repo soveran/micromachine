@@ -42,6 +42,9 @@ Or callbacks on any transition:
       puts "Transitioned..."
     end
 
+Note that `:any` is a special key. Using it as a state when declaring
+transitions will give you unexpected results.
+
 Adding MicroMachine to your models
 ----------------------------------
 
