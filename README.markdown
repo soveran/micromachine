@@ -91,6 +91,35 @@ This example asumes you have a :confirmation_state attribute in your
 model. This may look like a very verbose implementation, but you gain a
 lot in flexibility.
 
+An alternative approach, using callbacks:
+
+    class Event < ActiveRecord::Base
+      def confirm!
+        confirmation.trigger(:confirm)
+      end
+
+      def cancel!
+        confirmation.trigger(:cancel)
+      end
+
+      def reset!
+        confirmation.trigger(:reset)
+      end
+
+      def confirmation
+        @confirmation ||= begin
+          confirmation = MicroMachine.new(confirmation_state || "pending")
+          confirmation.transitions_for[:confirm] = { "pending" => "confirmed" }
+          confirmation.transitions_for[:cancel] = { "confirmed" => "cancelled" }
+          confirmation.transitions_for[:reset] = { "confirmed" => "pending", "cancelled" => "pending" }
+          confirmation.on(:any) { self.confirmation_state = confirmation.state }
+          confirmation
+        end
+      end
+    end
+
+Now, on any transition the `confirmation_state` attribute in the model will be updated.
+
 Installation
 ------------
 

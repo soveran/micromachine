@@ -73,4 +73,43 @@ class MicroMachineTest < Test::Unit::TestCase
       assert_equal "Ignored", @current
     end
   end
+
+  context "dealing with from a model callbacks" do
+    class Model
+      attr_accessor :state
+
+      def machine
+        @machine ||= begin
+                       machine = MicroMachine.new(:pending)
+                       machine.transitions_for[:confirm]  = { :pending => :confirmed }
+                       machine.transitions_for[:ignore]   = { :pending => :ignored }
+                       machine.transitions_for[:reset]    = { :confirmed => :pending, :ignored => :pending }
+                       machine.on(:any)       { self.state = machine.state }
+                       machine
+                     end
+      end
+    end
+
+    setup do
+      @model = Model.new
+    end
+
+    should "execute the callback any when a state" do
+      @model.machine.trigger(:confirm)
+      assert_equal :confirmed, @model.machine.state
+      assert_equal :confirmed, @model.state
+
+      @model.machine.trigger(:ignore)
+      assert_equal :confirmed, @model.machine.state
+      assert_equal :confirmed, @model.state
+
+      @model.machine.trigger(:reset)
+      assert_equal :pending, @model.machine.state
+      assert_equal :pending, @model.state
+
+      @model.machine.trigger(:ignore)
+      assert_equal :ignored, @model.machine.state
+      assert_equal :ignored, @model.state
+    end
+  end
 end
