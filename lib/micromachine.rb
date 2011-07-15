@@ -28,4 +28,8 @@ class MicroMachine
   rescue NoMethodError
     raise InvalidEvent
   end
+
+  def ==(some_state)
+    state == some_state
+  end
 end
