@@ -27,9 +27,29 @@ machine.transitions_for[:ignore]  = { :new => :ignored }
 machine.transitions_for[:reset]   = { :confirmed => :new, :ignored => :new }
 
 machine.trigger(:confirm)  #=> true
+machine.state              #=> :confirmed
+
 machine.trigger(:ignore)   #=> false
+machine.state              #=> :confirmed
+
 machine.trigger(:reset)    #=> true
+machine.state              #=> :new
+
 machine.trigger(:ignore)   #=> true
+machine.state              #=> :ignored
+```
+
+You can also ask if an event will trigger a change in state. Following
+the example above:
+
+``` ruby
+machine.state              #=> :ignored
+
+machine.trigger?(:ignore)  #=> false
+machine.trigger?(:reset)   #=> true
+
+# And the state is preserved, because you were only asking.
+machine.state              #=> :ignored
 ```
 
 It can also have callbacks when entering some state:
@@ -50,6 +70,8 @@ end
 
 Note that `:any` is a special key. Using it as a state when declaring
 transitions will give you unexpected results.
+
+Check the examples directory for more information.
 
 Adding MicroMachine to your models
 ----------------------------------
