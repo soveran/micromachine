@@ -20,11 +20,13 @@ class MicroMachine
       callbacks = @callbacks[@state] + @callbacks[:any]
       callbacks.each { |callback| callback.call }
       true
+    else
+      false
     end
   end
 
   def trigger?(event)
-    transitions_for[event][state]
+    transitions_for[event][state] ? true : false
   rescue NoMethodError
     raise InvalidEvent
   end

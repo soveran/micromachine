@@ -18,20 +18,20 @@ class MicroMachineTest < Test::Unit::TestCase
     end
 
     should "discern transitions" do
-      assert @machine.trigger?(:confirm)
-      assert @machine.trigger(:confirm)
+      assert_equal true, @machine.trigger?(:confirm)
+      assert_equal true, @machine.trigger(:confirm)
       assert_equal :confirmed, @machine.state
 
-      assert !@machine.trigger?(:ignore)
-      assert !@machine.trigger(:ignore)
+      assert_equal false, @machine.trigger?(:ignore)
+      assert_equal false, @machine.trigger(:ignore)
       assert_equal :confirmed, @machine.state
 
-      assert @machine.trigger?(:reset)
-      assert @machine.trigger(:reset)
+      assert_equal true, @machine.trigger?(:reset)
+      assert_equal true, @machine.trigger(:reset)
       assert_equal :pending, @machine.state
 
-      assert @machine.trigger?(:ignore)
-      assert @machine.trigger(:ignore)
+      assert_equal true, @machine.trigger?(:ignore)
+      assert_equal true, @machine.trigger(:ignore)
       assert_equal :ignored, @machine.state
     end
 
