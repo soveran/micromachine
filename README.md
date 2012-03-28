@@ -17,30 +17,36 @@ nothing more.
 Usage
 -----
 
-    require 'micromachine'
+``` ruby
+require 'micromachine'
 
-    machine = MicroMachine.new(:new) # Initial state.
+machine = MicroMachine.new(:new) # Initial state.
 
-    machine.transitions_for[:confirm] = { :new => :confirmed }
-    machine.transitions_for[:ignore]  = { :new => :ignored }
-    machine.transitions_for[:reset]   = { :confirmed => :new, :ignored => :new }
+machine.transitions_for[:confirm] = { :new => :confirmed }
+machine.transitions_for[:ignore]  = { :new => :ignored }
+machine.transitions_for[:reset]   = { :confirmed => :new, :ignored => :new }
 
-    machine.trigger(:confirm)  #=> true
-    machine.trigger(:ignore)   #=> false
-    machine.trigger(:reset)    #=> true
-    machine.trigger(:ignore)   #=> true
+machine.trigger(:confirm)  #=> true
+machine.trigger(:ignore)   #=> false
+machine.trigger(:reset)    #=> true
+machine.trigger(:ignore)   #=> true
+```
 
 It can also have callbacks when entering some state:
 
-    machine.on(:confirmed) do
-      puts "Confirmed"
-    end
+``` ruby
+machine.on(:confirmed) do
+  puts "Confirmed"
+end
+```
 
 Or callbacks on any transition:
 
-    machine.on(:any) do
-      puts "Transitioned..."
-    end
+``` ruby
+machine.on(:any) do
+  puts "Transitioned..."
+end
+```
 
 Note that `:any` is a special key. Using it as a state when declaring
 transitions will give you unexpected results.
@@ -55,68 +61,77 @@ composition: you instantiate a finite state machine (or many!) inside
 your model and you are in charge of querying and persisting the state.
 Here's an example of how to use it with an ActiveRecord model:
 
-    class Event < ActiveRecord::Base
-      before_save :persist_confirmation
+``` ruby
+class Event < ActiveRecord::Base
+  before_save :persist_confirmation
 
-      def confirm!
-        confirmation.trigger(:confirm)
-      end
+  def confirm!
+    confirmation.trigger(:confirm)
+  end
 
-      def cancel!
-        confirmation.trigger(:cancel)
-      end
+  def cancel!
+    confirmation.trigger(:cancel)
+  end
 
-      def reset!
-        confirmation.trigger(:reset)
-      end
+  def reset!
+    confirmation.trigger(:reset)
+  end
 
-      def confirmation
-        @confirmation ||= begin
-          @confirmation = MicroMachine.new(confirmation_state || "pending")
-          @confirmation.transitions_for[:confirm] = { "pending" => "confirmed" }
-          @confirmation.transitions_for[:cancel] = { "confirmed" => "cancelled" }
-          @confirmation.transitions_for[:reset] = { "confirmed" => "pending", "cancelled" => "pending" }
-          @confirmation
-        end
-      end
+  def confirmation
+    @confirmation ||= begin
+      fsm = MicroMachine.new(confirmation_state || "pending")
 
-    private
+      fsm.transitions_for[:confirm] = { "pending" => "confirmed" }
+      fsm.transitions_for[:cancel] = { "confirmed" => "cancelled" }
+      fsm.transitions_for[:reset] = { "confirmed" => "pending", "cancelled" => "pending" }
 
-      def persist_confirmation
-        self.confirmation_state = confirmation.state
-      end
+      fsm
     end
+  end
 
-This example asumes you have a :confirmation_state attribute in your
+private
+
+  def persist_confirmation
+    self.confirmation_state = confirmation.state
+  end
+end
+```
+
+This example asumes you have a `:confirmation_state` attribute in your
 model. This may look like a very verbose implementation, but you gain a
 lot in flexibility.
 
 An alternative approach, using callbacks:
 
-    class Event < ActiveRecord::Base
-      def confirm!
-        confirmation.trigger(:confirm)
-      end
+``` ruby
+class Event < ActiveRecord::Base
+  def confirm!
+    confirmation.trigger(:confirm)
+  end
 
-      def cancel!
-        confirmation.trigger(:cancel)
-      end
+  def cancel!
+    confirmation.trigger(:cancel)
+  end
 
-      def reset!
-        confirmation.trigger(:reset)
-      end
+  def reset!
+    confirmation.trigger(:reset)
+  end
 
-      def confirmation
-        @confirmation ||= begin
-          confirmation = MicroMachine.new(confirmation_state || "pending")
-          confirmation.transitions_for[:confirm] = { "pending" => "confirmed" }
-          confirmation.transitions_for[:cancel] = { "confirmed" => "cancelled" }
-          confirmation.transitions_for[:reset] = { "confirmed" => "pending", "cancelled" => "pending" }
-          confirmation.on(:any) { self.confirmation_state = confirmation.state }
-          confirmation
-        end
-      end
+  def confirmation
+    @confirmation ||= begin
+      fsm = MicroMachine.new(confirmation_state || "pending")
+
+      fsm.transitions_for[:confirm] = { "pending" => "confirmed" }
+      fsm.transitions_for[:cancel] = { "confirmed" => "cancelled" }
+      fsm.transitions_for[:reset] = { "confirmed" => "pending", "cancelled" => "pending" }
+
+      fsm.on(:any) { self.confirmation_state = confirmation.state }
+
+      fsm
     end
+  end
+end
+```
 
 Now, on any transition the `confirmation_state` attribute in the model will be updated.
 
@@ -128,7 +143,7 @@ Installation
 License
 -------
 
-Copyright (c) 2009 Michel Martens for Citrusbyte
+Copyright (c) 2009 Michel Martens
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation

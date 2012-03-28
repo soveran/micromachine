@@ -6,5 +6,5 @@ Gem::Specification.new do |s|
   s.author = "Michel Martens"
   s.email = "michel@soveran.com"
   s.homepage = "http://github.com/soveran/micromachine"
-  s.files = ["lib/micromachine.rb", "README.markdown", "LICENSE", "Rakefile", "micromachine.gemspec", "example/micromachine_sample.rb", "example/micromachine_sample_gem.rb"]
+  s.files = Dir["lib/**/*.rb", "README*", "LICENSE", "Rakefile", "*.gemspec", "example/**/*.*"]
 end
