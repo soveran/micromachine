@@ -10,9 +10,9 @@ There are many finite state machine implementations for Ruby, and they
 all provide a nice DSL for declaring events, exceptions, callbacks,
 and all kinds of niceties in general.
 
-But if all you want is a finite state machine, look no further: this is only
-22 lines of code and provides everything a finite state machine must have, and
-nothing more.
+But if all you want is a finite state machine, look no further: this
+is only 22 lines of code and provides everything a finite state
+machine must have, and nothing more.
 
 Usage
 -----
@@ -155,7 +155,8 @@ class Event < ActiveRecord::Base
 end
 ```
 
-Now, on any transition the `confirmation_state` attribute in the model will be updated.
+Now, on any transition the `confirmation_state` attribute in the model
+will be updated.
 
 Installation
 ------------
