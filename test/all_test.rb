@@ -42,12 +42,39 @@ class MicroMachineTest < Test::Unit::TestCase
     end
   end
 
+  context "using when for defining transitions" do
+    setup do
+      @machine = MicroMachine.new(:pending)
+      @machine.when(:confirm, :pending => :confirmed)
+      @machine.when(:ignore, :pending => :ignored)
+      @machine.when(:reset, :confirmed => :pending, :ignored => :pending)
+    end
+
+    should "discern transitions" do
+      assert_equal true, @machine.trigger?(:confirm)
+      assert_equal true, @machine.trigger(:confirm)
+      assert_equal :confirmed, @machine.state
+
+      assert_equal false, @machine.trigger?(:ignore)
+      assert_equal false, @machine.trigger(:ignore)
+      assert_equal :confirmed, @machine.state
+
+      assert_equal true, @machine.trigger?(:reset)
+      assert_equal true, @machine.trigger(:reset)
+      assert_equal :pending, @machine.state
+
+      assert_equal true, @machine.trigger?(:ignore)
+      assert_equal true, @machine.trigger(:ignore)
+      assert_equal :ignored, @machine.state
+    end
+  end
+
   context "dealing with callbacks" do
     setup do
       @machine = MicroMachine.new(:pending)
-      @machine.transitions_for[:confirm]  = { :pending => :confirmed }
-      @machine.transitions_for[:ignore]   = { :pending => :ignored }
-      @machine.transitions_for[:reset]    = { :confirmed => :pending, :ignored => :pending }
+      @machine.when(:confirm, :pending => :confirmed)
+      @machine.when(:ignore, :pending => :ignored)
+      @machine.when(:reset, :confirmed => :pending, :ignored => :pending)
 
       @machine.on(:pending)   { @state = "Pending" }
       @machine.on(:confirmed) { @state = "Confirmed" }
@@ -80,13 +107,13 @@ class MicroMachineTest < Test::Unit::TestCase
 
       def machine
         @machine ||= begin
-                       machine = MicroMachine.new(:pending)
-                       machine.transitions_for[:confirm]  = { :pending => :confirmed }
-                       machine.transitions_for[:ignore]   = { :pending => :ignored }
-                       machine.transitions_for[:reset]    = { :confirmed => :pending, :ignored => :pending }
-                       machine.on(:any)       { self.state = machine.state }
-                       machine
-                     end
+          machine = MicroMachine.new(:pending)
+          machine.when(:confirm, :pending => :confirmed)
+          machine.when(:ignore, :pending => :ignored)
+          machine.when(:reset, :confirmed => :pending, :ignored => :pending)
+          machine.on(:any) { self.state = machine.state }
+          machine
+        end
       end
     end
 

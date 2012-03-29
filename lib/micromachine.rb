@@ -14,6 +14,10 @@ class MicroMachine
     @callbacks[key] << block
   end
 
+  def when(event, transitions)
+    transitions_for[event] = transitions
+  end
+
   def trigger event
     if trigger?(event)
       @state = transitions_for[event][@state]
@@ -29,6 +33,10 @@ class MicroMachine
     transitions_for[event][state] ? true : false
   rescue NoMethodError
     raise InvalidEvent
+  end
+
+  def events
+    transitions_for.keys
   end
 
   def ==(some_state)

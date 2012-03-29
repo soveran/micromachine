@@ -11,7 +11,7 @@ all provide a nice DSL for declaring events, exceptions, callbacks,
 and all kinds of niceties in general.
 
 But if all you want is a finite state machine, look no further: this
-is only 22 lines of code and provides everything a finite state
+has less than 50 lines of code and provides everything a finite state
 machine must have, and nothing more.
 
 Usage
@@ -22,9 +22,10 @@ require 'micromachine'
 
 machine = MicroMachine.new(:new) # Initial state.
 
-machine.transitions_for[:confirm] = { :new => :confirmed }
-machine.transitions_for[:ignore]  = { :new => :ignored }
-machine.transitions_for[:reset]   = { :confirmed => :new, :ignored => :new }
+# Define the possible transitions for each event.
+machine.when(:confirm, :new => :confirmed)
+machine.when(:ignore, :new => :ignored)
+machine.when(:reset, :confirmed => :new, :ignored => :new)
 
 machine.trigger(:confirm)  #=> true
 machine.state              #=> :confirmed
@@ -37,6 +38,15 @@ machine.state              #=> :new
 
 machine.trigger(:ignore)   #=> true
 machine.state              #=> :ignored
+```
+
+The `when` helper is syntactic sugar for assigning to the
+`transitions_for` hash. This code is equivalent:
+
+``` ruby
+machine.transitions_for[:confirm] = { :new => :confirmed }
+machine.transitions_for[:ignore]  = { :new => :ignored }
+machine.transitions_for[:reset]   = { :confirmed => :new, :ignored => :new }
 ```
 
 You can also ask if an event will trigger a change in state. Following
@@ -103,9 +113,9 @@ class Event < ActiveRecord::Base
     @confirmation ||= begin
       fsm = MicroMachine.new(confirmation_state || "pending")
 
-      fsm.transitions_for[:confirm] = { "pending" => "confirmed" }
-      fsm.transitions_for[:cancel] = { "confirmed" => "cancelled" }
-      fsm.transitions_for[:reset] = { "confirmed" => "pending", "cancelled" => "pending" }
+      fsm.when(:confirm, "pending" => "confirmed")
+      fsm.when(:cancel, "confirmed" => "cancelled")
+      fsm.when(:reset, "confirmed" => "pending", "cancelled" => "pending")
 
       fsm
     end
@@ -143,9 +153,9 @@ class Event < ActiveRecord::Base
     @confirmation ||= begin
       fsm = MicroMachine.new(confirmation_state || "pending")
 
-      fsm.transitions_for[:confirm] = { "pending" => "confirmed" }
-      fsm.transitions_for[:cancel] = { "confirmed" => "cancelled" }
-      fsm.transitions_for[:reset] = { "confirmed" => "pending", "cancelled" => "pending" }
+      fsm.when(:confirm, "pending" => "confirmed")
+      fsm.when(:cancel, "confirmed" => "cancelled")
+      fsm.when(:reset, "confirmed" => "pending", "cancelled" => "pending")
 
       fsm.on(:any) { self.confirmation_state = confirmation.state }
 
