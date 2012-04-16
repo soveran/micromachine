@@ -30,9 +30,10 @@ class MicroMachine
   end
 
   def trigger?(event)
-    transitions_for[event][state] ? true : false
-  rescue NoMethodError
-    raise InvalidEvent
+    transitions = transitions_for.fetch(event) do
+      raise InvalidEvent
+    end
+    transitions.has_key?(state)
   end
 
   def events
