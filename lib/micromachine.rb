@@ -30,9 +30,8 @@ class MicroMachine
   end
 
   def trigger?(event)
+    raise InvalidEvent unless transitions_for.has_key?(event)
     transitions_for[event][state] ? true : false
-  rescue NoMethodError
-    raise InvalidEvent
   end
 
   def events
