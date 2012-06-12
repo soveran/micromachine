@@ -139,4 +139,21 @@ class MicroMachineTest < Test::Unit::TestCase
       assert_equal :ignored, @model.state
     end
   end
+
+  context 'introspection' do
+    setup do
+      @machine = MicroMachine.new(:pending)
+      @machine.transitions_for[:confirm]  = { :pending => :confirmed }
+      @machine.transitions_for[:ignore]   = { :pending => :ignored }
+      @machine.transitions_for[:reset]    = { :confirmed => :pending, :ignored => :pending }
+    end
+
+    should 'return a list of defined events' do
+      assert_equal [:confirm, :ignore, :reset], @machine.events
+    end
+
+    should 'return a list of defined states' do
+      assert_equal [:pending, :confirmed, :ignored], @machine.states
+    end
+  end
 end
