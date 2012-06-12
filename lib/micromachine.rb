@@ -38,6 +38,12 @@ class MicroMachine
     transitions_for.keys
   end
 
+  def states
+    transitions_for.values.map do |transition|
+      [transition.keys, transition.values].flatten
+    end.flatten.uniq
+  end
+
   def ==(some_state)
     state == some_state
   end
