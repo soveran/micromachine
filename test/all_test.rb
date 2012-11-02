@@ -76,26 +76,30 @@ class MicroMachineTest < Test::Unit::TestCase
       @machine.when(:ignore, :pending => :ignored)
       @machine.when(:reset, :confirmed => :pending, :ignored => :pending)
 
-      @machine.on(:pending)   { @state = "Pending" }
-      @machine.on(:confirmed) { @state = "Confirmed" }
-      @machine.on(:ignored)   { @state = "Ignored" }
-      @machine.on(:any)       { @current = @state }
+      @machine.on(:pending)   {|e| @event = e; @state = "Pending" }
+      @machine.on(:confirmed) {|e| @event = e; @state = "Confirmed" }
+      @machine.on(:ignored)   {|e| @event = e; @state = "Ignored" }
+      @machine.on(:any)       {|e| @event = e; @current = @state }
     end
 
     should "execute callbacks when entering a state" do
       @machine.trigger(:confirm)
+      assert_equal :confirm, @event
       assert_equal "Confirmed", @state
       assert_equal "Confirmed", @current
 
       @machine.trigger(:ignore)
+      assert_equal :confirm, @event
       assert_equal "Confirmed", @state
       assert_equal "Confirmed", @current
 
       @machine.trigger(:reset)
+      assert_equal :reset, @event
       assert_equal "Pending", @state
       assert_equal "Pending", @current
 
       @machine.trigger(:ignore)
+      assert_equal :ignore, @event
       assert_equal "Ignored", @state
       assert_equal "Ignored", @current
     end
@@ -104,6 +108,7 @@ class MicroMachineTest < Test::Unit::TestCase
   context "dealing with from a model callbacks" do
     class Model
       attr_accessor :state
+      attr_accessor :event
 
       def machine
         @machine ||= begin
@@ -111,7 +116,7 @@ class MicroMachineTest < Test::Unit::TestCase
           machine.when(:confirm, :pending => :confirmed)
           machine.when(:ignore, :pending => :ignored)
           machine.when(:reset, :confirmed => :pending, :ignored => :pending)
-          machine.on(:any) { self.state = machine.state }
+          machine.on(:any) {|e| self.event = e; self.state = machine.state }
           machine
         end
       end
@@ -123,18 +128,22 @@ class MicroMachineTest < Test::Unit::TestCase
 
     should "execute the callback any when a state" do
       @model.machine.trigger(:confirm)
+      assert_equal :confirm, @model.event
       assert_equal :confirmed, @model.machine.state
       assert_equal :confirmed, @model.state
 
       @model.machine.trigger(:ignore)
+      assert_equal :confirm, @model.event
       assert_equal :confirmed, @model.machine.state
       assert_equal :confirmed, @model.state
 
       @model.machine.trigger(:reset)
+      assert_equal :reset, @model.event
       assert_equal :pending, @model.machine.state
       assert_equal :pending, @model.state
 
       @model.machine.trigger(:ignore)
+      assert_equal :ignore, @model.event
       assert_equal :ignored, @model.machine.state
       assert_equal :ignored, @model.state
     end
