@@ -6,7 +6,7 @@ class MicroMachine
 
   def initialize(initial_state)
     @state = initial_state
-    @transitions_for = Hash.new
+    @transitions_for = Hash.new { raise InvalidEvent }
     @callbacks = Hash.new { |hash, key| hash[key] = [] }
   end
 
@@ -18,20 +18,16 @@ class MicroMachine
     transitions_for[event] = transitions
   end
 
-    if trigger?(event)
   def trigger(event)
+    !!if trigger?(event)
       @state = transitions_for[event][@state]
       callbacks = @callbacks[@state] + @callbacks[:any]
-      callbacks.each { |callback| callback.call }
-      true
-    else
-      false
+      callbacks.each(&:call)
     end
   end
 
   def trigger?(event)
-    raise InvalidEvent unless transitions_for.has_key?(event)
-    transitions_for[event][state] ? true : false
+    !!transitions_for[event][state]
   end
 
   def events
