@@ -4,13 +4,13 @@ class MicroMachine
   attr :transitions_for
   attr :state
 
-  def initialize initial_state
+  def initialize(initial_state)
     @state = initial_state
     @transitions_for = Hash.new
     @callbacks = Hash.new { |hash, key| hash[key] = [] }
   end
 
-  def on key, &block
+  def on(key, &block)
     @callbacks[key] << block
   end
 
@@ -18,8 +18,8 @@ class MicroMachine
     transitions_for[event] = transitions
   end
 
-  def trigger event
     if trigger?(event)
+  def trigger(event)
       @state = transitions_for[event][@state]
       callbacks = @callbacks[@state] + @callbacks[:any]
       callbacks.each { |callback| callback.call }
