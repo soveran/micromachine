@@ -11,8 +11,8 @@ all provide a nice DSL for declaring events, exceptions, callbacks,
 and all kinds of niceties in general.
 
 But if all you want is a finite state machine, look no further: this
-has less than 50 lines of code and provides everything a finite state
-machine must have, and nothing more.
+has 40 lines of code and provides everything a finite state machine
+must have, and nothing more.
 
 Usage
 -----
