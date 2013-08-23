@@ -40,6 +40,18 @@ class MicroMachineTest < Test::Unit::TestCase
         @machine.trigger(:random_event)
       end
     end
+
+    should "raise an error if event is triggered from/to a non complatible state and exception flag activated" do
+      assert_raise MicroMachine::InvalidState do
+        @machine.trigger(:reset, :exception => true)
+      end
+    end
+
+    should "not raise an error if event is triggered from/to a non complatible state and exception flag not activated" do
+      assert_nothing_raised do
+        @machine.trigger(:reset)
+      end
+    end
   end
 
   context "using when for defining transitions" do
