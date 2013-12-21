@@ -23,9 +23,9 @@ require 'micromachine'
 machine = MicroMachine.new(:new) # Initial state.
 
 # Define the possible transitions for each event.
-machine.when(:confirm, :new => :confirmed)
-machine.when(:ignore, :new => :ignored)
-machine.when(:reset, :confirmed => :new, :ignored => :new)
+machine.when(:confirm, new: :confirmed)
+machine.when(:ignore, new: :ignored)
+machine.when(:reset, confirmed: :new, ignored: :new)
 
 machine.trigger(:confirm)  #=> true
 machine.state              #=> :confirmed
@@ -40,17 +40,16 @@ machine.trigger(:ignore)   #=> true
 machine.state              #=> :ignored
 ```
 
-The `when` helper is syntactic sugar for assigning to the
-`transitions_for` hash. This code is equivalent:
+The `when` helper is syntactic sugar for assigning events and transitions
+to the `transitions_for` hash. This code is equivalent:
 
 ``` ruby
-machine.transitions_for[:confirm] = { :new => :confirmed }
-machine.transitions_for[:ignore]  = { :new => :ignored }
-machine.transitions_for[:reset]   = { :confirmed => :new, :ignored => :new }
+machine.transitions_for[:confirm] = { new: :confirmed }
+machine.transitions_for[:ignore]  = { new: :ignored }
+machine.transitions_for[:reset]   = { confirmed: :new, ignored: new }
 ```
 
-You can also ask if an event will trigger a change in state. Following
-the example above:
+You can also ask if an event will trigger a change in state:
 
 ``` ruby
 machine.state              #=> :ignored
@@ -91,21 +90,19 @@ is to extend the model and transform it into a finite state machine.
 Instead of working as a mixin, MicroMachine's implementation is by
 composition: you instantiate a finite state machine (or many!) inside
 your model and you are in charge of querying and persisting the state.
-Here's an example of how to use it with an ActiveRecord model:
+Here's an example of how to use it with an Ohm model:
 
 ``` ruby
-class Event < ActiveRecord::Base
-  before_save :persist_confirmation
-
-  def confirm!
+class Event < Ohm::Model
+  def confirm
     confirmation.trigger(:confirm)
   end
 
-  def cancel!
+  def cancel
     confirmation.trigger(:cancel)
   end
 
-  def reset!
+  def reset
     confirmation.trigger(:reset)
   end
 
@@ -113,35 +110,34 @@ class Event < ActiveRecord::Base
     @confirmation ||= begin
       fsm = MicroMachine.new(confirmation_state || "pending")
 
-      fsm.when(:confirm, "pending" => "confirmed")
-      fsm.when(:cancel, "confirmed" => "cancelled")
-      fsm.when(:reset, "confirmed" => "pending", "cancelled" => "pending")
+      fsm.when(:confirm, pending: :confirmed)
+      fsm.when(:cancel, confirmed: :cancelled)
+      fsm.when(:reset, confirmed: :pending, cancelled: :pending)
 
       fsm
     end
   end
 
-private
-
-  def persist_confirmation
-    self.confirmation_state = confirmation.state
+  def save
+    self.confirmation_state = confirmation.state.to_s
+    super
   end
 end
 ```
 
 This example asumes you have a `:confirmation_state` attribute in your
-model. This may look like a very verbose implementation, but you gain a
+model. This may looks like a very verbose implementation, but you gain a
 lot in flexibility.
 
 An alternative approach, using callbacks:
 
 ``` ruby
-class Event < ActiveRecord::Base
-  def confirm!
+class Event < Ohm::Model
+  def confirm
     confirmation.trigger(:confirm)
   end
 
-  def cancel!
+  def cancel
     confirmation.trigger(:cancel)
   end
 
@@ -153,11 +149,11 @@ class Event < ActiveRecord::Base
     @confirmation ||= begin
       fsm = MicroMachine.new(confirmation_state || "pending")
 
-      fsm.when(:confirm, "pending" => "confirmed")
-      fsm.when(:cancel, "confirmed" => "cancelled")
-      fsm.when(:reset, "confirmed" => "pending", "cancelled" => "pending")
+      fsm.when(:confirm, pending: :confirmed)
+      fsm.when(:cancel, confirmed: :cancelled)
+      fsm.when(:reset, confirmed: :pending, cancelled: :pending)
 
-      fsm.on(:any) { self.confirmation_state = confirmation.state }
+      fsm.on(:any) { self.confirmation_state = confirmation.state.to_s }
 
       fsm
     end
@@ -171,7 +167,7 @@ will be updated.
 Installation
 ------------
 
-    $ sudo gem install micromachine
+    $ gem install micromachine
 
 License
 -------
