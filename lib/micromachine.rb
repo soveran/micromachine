@@ -39,7 +39,7 @@ class MicroMachine
   end
 
   def states
-    events.map { |e| transitions_for[e].to_a }.flatten.uniq
+    events.map { |e| transitions_for[e].to_a }.flatten!.uniq!
   end
 
   def ==(some_state)
