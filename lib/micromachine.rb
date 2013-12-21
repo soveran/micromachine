@@ -29,6 +29,31 @@ class MicroMachine
     end
   end
 
+  # Returns +true+ if +event+ triggers a change in state.
+  #
+  #   machine = MicroMachine.new(:pending)
+  #   machine.when(:confirm, pending: :confirmed)
+  #   machine.when(:ignore, pending: :ignored)
+  #   machine.when(:reset, confirmed: :pending, ignored: :pending)
+  #
+  #   machine.state
+  #   # => :pending
+  #
+  #   machine.trigger?(:reset)
+  #   # => false
+  #
+  #   machine.trigger?(:confirm)
+  #   # => true
+  #
+  #   machine.trigger?(:ignore)
+  #   # => true
+  #
+  # Raises a <tt>MicroMachine::InvalidEvent</tt> error if an
+  # invalid event is asked.
+  #
+  #   machine.trigger?(:invalid_event)
+  #   # => MicroMachine::InvalidEvent: MicroMachine::InvalidEvent
+  #
   def trigger?(event)
     raise InvalidEvent unless transitions_for.has_key?(event)
     transitions_for[event][state] ? true : false
