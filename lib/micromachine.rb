@@ -42,6 +42,17 @@ class MicroMachine
     events.map { |e| transitions_for[e].to_a }.flatten.uniq
   end
 
+  # Returns +true+ if +some_state+ is equal to current state.
+  # Otherwise, returns +false+.
+  #
+  #   machine = MicroMachine.new("new")
+  #
+  #   machine == "pending"
+  #   # => false
+  #
+  #   machine == "new"
+  #   # => true
+  #
   def ==(some_state)
     state == some_state
   end
