@@ -2,6 +2,19 @@ class MicroMachine
   InvalidEvent = Class.new(NoMethodError)
 
   attr :transitions_for
+
+  # Returns current state.
+  #
+  #   machine = MicroMachine.new(:pending)
+  #   machine.when(:confirm, pending: :confirmed)
+  #
+  #   machine.state
+  #   # => :pending
+  #
+  #   machine.trigger(:confirm)
+  #
+  #   machine.state
+  #   # => :confirmed
   attr :state
 
   def initialize initial_state
