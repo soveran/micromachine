@@ -38,6 +38,15 @@ class MicroMachine
     transitions_for.keys
   end
 
+  # Returns an array with the defined states.
+  #
+  #   machine = MicroMachine.new("new")
+  #   machine.when(:confirm, pending: :confirmed)
+  #   machine.when(:ignore, pending: :ignored)
+  #   machine.when(:reset, confirmed: :pending, ignored: :pending)
+  #
+  #   machine.states
+  #   # => [:pending, :confirmed, :ignored]
   def states
     events.map { |e| transitions_for[e].to_a }.flatten.uniq
   end
