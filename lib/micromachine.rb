@@ -84,6 +84,28 @@ class MicroMachine
     transitions_for[event] = transitions
   end
 
+  # Tries to trigger +event+. If the transition is possible,
+  # it changes the state, executes the defined callbacks and
+  # returns +true+. Otherwise, the state remains unchanged and
+  # +false+ is returned.
+  #
+  #   machine = MicroMachine.new(:pending)
+  #   machine.when(:confirm, pending: :confirmed)
+  #   machine.when(:ignore, pending: :ignored)
+  #   machine.when(:reset, confirmed: :pending, ignored: :pending)
+  #
+  #   machine.on(:pending)   { puts "Pending" }
+  #   machine.on(:confirmed) { puts "Confirmed" }
+  #
+  #   machine.trigger(:reset)
+  #   # => false
+  #
+  #   machine.trigger(:confirm) # prints "Confirmed"
+  #   # => true
+  #
+  #   machine.trigger(:reset) # prints "Pending"
+  #   # => true
+  #
   def trigger event
     if trigger?(event)
       @state = transitions_for[event][@state]
