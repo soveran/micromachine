@@ -1,6 +1,15 @@
 class MicroMachine
   InvalidEvent = Class.new(NoMethodError)
 
+  # Returns a hash with events as keys and the defined
+  # transitions of the events as values.
+  #
+  #   machine = MicroMachine.new(:pending)
+  #   machine.when(:confirm, pending: :confirmed)
+  #   machine.when(:reset, confirmed: :pending)
+  #
+  #   machine.transitions_for
+  #   # => {:confirm=>{:pending=>:confirmed}, :reset=>{:confirmed=>:pending}}
   attr :transitions_for
 
   # Returns current state.
