@@ -34,6 +34,20 @@ class MicroMachine
     transitions_for[event][state] ? true : false
   end
 
+  # Returns an array with the defined events.
+  #
+  #   machine = MicroMachine.new("new")
+  #
+  #   machine.events
+  #   # => []
+  #
+  #   machine.when(:confirm, pending: :confirmed)
+  #   machine.when(:ignore, pending: :ignored)
+  #   machine.when(:reset, confirmed: :pending, ignored: :pending)
+  #
+  #   machine.events
+  #   # => [:confirm, :ignore, :reset]
+  #
   def events
     transitions_for.keys
   end
@@ -41,12 +55,17 @@ class MicroMachine
   # Returns an array with the defined states.
   #
   #   machine = MicroMachine.new("new")
+  #
+  #   machine.states
+  #   # => []
+  #
   #   machine.when(:confirm, pending: :confirmed)
   #   machine.when(:ignore, pending: :ignored)
   #   machine.when(:reset, confirmed: :pending, ignored: :pending)
   #
   #   machine.states
   #   # => [:pending, :confirmed, :ignored]
+  #
   def states
     events.map { |e| transitions_for[e].to_a }.flatten.uniq
   end
