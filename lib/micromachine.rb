@@ -10,8 +10,8 @@ class MicroMachine
     @callbacks = Hash.new { |hash, key| hash[key] = [] }
   end
 
-  def on(key, &block)
-    @callbacks[key] << block
+  def on(state, &block)
+    @callbacks[state] << block
   end
 
   def when(event, transitions)
