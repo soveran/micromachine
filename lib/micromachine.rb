@@ -36,7 +36,7 @@ class MicroMachine
 
   # Returns an array with the defined events.
   #
-  #   machine = MicroMachine.new("new")
+  #   machine = MicroMachine.new(:pending)
   #
   #   machine.events
   #   # => []
@@ -54,7 +54,7 @@ class MicroMachine
 
   # Returns an array with the defined states.
   #
-  #   machine = MicroMachine.new("new")
+  #   machine = MicroMachine.new(:pending)
   #
   #   machine.states
   #   # => []
@@ -73,12 +73,12 @@ class MicroMachine
   # Returns +true+ if +some_state+ is equal to current state.
   # Otherwise, returns +false+.
   #
-  #   machine = MicroMachine.new("new")
+  #   machine = MicroMachine.new(:new)
   #
-  #   machine == "pending"
+  #   machine == :pending
   #   # => false
   #
-  #   machine == "new"
+  #   machine == :new
   #   # => true
   #
   def ==(some_state)
