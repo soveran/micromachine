@@ -1,4 +1,13 @@
 class MicroMachine
+  # Raised when an invalid event is triggered.
+  #
+  #   machine = MicroMachine.new(:new)
+  #
+  #   machine.trigger?(:random)
+  #   # => MicroMachine::InvalidEvent: MicroMachine::InvalidEvent
+  #
+  #   machine.trigger(:random)
+  #   # => MicroMachine::InvalidEvent: MicroMachine::InvalidEvent
   InvalidEvent = Class.new(NoMethodError)
 
   # Returns a hash with events as keys and the defined
