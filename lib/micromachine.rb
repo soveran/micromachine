@@ -8,6 +8,7 @@ class MicroMachine
   #
   #   machine.trigger(:random)
   #   # => MicroMachine::InvalidEvent: MicroMachine::InvalidEvent
+  #
   InvalidEvent = Class.new(NoMethodError)
 
   # Returns a hash with events as keys and the defined
@@ -19,6 +20,7 @@ class MicroMachine
   #
   #   machine.transitions_for
   #   # => {:confirm=>{:pending=>:confirmed}, :reset=>{:confirmed=>:pending}}
+  #
   attr :transitions_for
 
   # Returns current state.
@@ -33,8 +35,15 @@ class MicroMachine
   #
   #   machine.state
   #   # => :confirmed
+  #
   attr :state
 
+  # Creates a state machine with an +initial_state+.
+  #
+  #   machine = MicroMachine.new(:new)
+  #   machine.state
+  #   # => :new
+  #
   def initialize initial_state
     @state = initial_state
     @transitions_for = Hash.new
