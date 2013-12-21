@@ -14,6 +14,19 @@ class MicroMachine
     @callbacks[key] << block
   end
 
+  # Defines possibles +transitions+ for +event+.
+  #
+  #   machine = MicroMachine.new(:pending)
+  #   machine.when(:confirm, pending: :confirmed)
+  #
+  #   machine.transitions_for[:confirm]
+  #   # => {:pending=>:confirmed}
+  #
+  #   machine.when(:reset, confirmed: :pending, ignored: :pending)
+  #
+  #   machine.transitions_for[:reset]
+  #   # => {:confirmed=>:pending, :ignored=>:pending}
+  #
   def when(event, transitions)
     transitions_for[event] = transitions
   end
