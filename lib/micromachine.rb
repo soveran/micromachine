@@ -10,11 +10,42 @@ class MicroMachine
     @callbacks = Hash.new { |hash, key| hash[key] = [] }
   end
 
+  # Adds a callback to +state+. +block+ is executed when
+  # +state+ is triggered.
+  #
+  #   machine = MicroMachine.new(:pending)
+  #   machine.when(:confirm, pending: :confirmed)
+  #   machine.when(:reset, confirmed: :pending)
+  #
+  #   machine.on(:pending)   { puts "Pending" }
+  #   machine.on(:confirmed) { puts "Confirmed" }
+  #
+  #   machine.trigger(:confirm)
+  #   # => Confirmed
+  #
+  #   machine.trigger(:reset)
+  #   # => Pending
+  #
+  # Use the special +state+ <tt>:any</tt> to define a callback
+  # on any transition.
+  #
+  #   machine = MicroMachine.new(:pending)
+  #   machine.when(:confirm, pending: :confirmed)
+  #   machine.when(:reset, confirmed: :pending)
+  #
+  #   machine.on(:any) { puts "Transitioned" }
+  #
+  #   machine.trigger(:confirm)
+  #   # => Transitioned
+  #
+  #   machine.trigger(:reset)
+  #   # => Transitioned
+  #
   def on key, &block
     @callbacks[key] << block
   end
 
-  # Defines possibles +transitions+ for +event+.
+  # Adds possibles +transitions+ for +event+.
   #
   #   machine = MicroMachine.new(:pending)
   #   machine.when(:confirm, pending: :confirmed)
