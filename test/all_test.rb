@@ -78,7 +78,7 @@ class MicroMachineTest < Test::Unit::TestCase
 
       @machine.on(:pending)   { @state = "Pending" }
       @machine.on(:confirmed) { @state = "Confirmed" }
-      @machine.on(:ignored)   { @state = "Ignored" }
+      @machine.on(:ignored)   { |a,b| @state = "#{a}: #{b}" }
       @machine.on(:any)       { @current = @state }
     end
 
@@ -94,10 +94,12 @@ class MicroMachineTest < Test::Unit::TestCase
       @machine.trigger(:reset)
       assert_equal "Pending", @state
       assert_equal "Pending", @current
+    end
 
-      @machine.trigger(:ignore)
-      assert_equal "Ignored", @state
-      assert_equal "Ignored", @current
+    should "pass arguments to callbacks" do
+      @machine.trigger(:ignore, "State", "Ignored")
+      assert_equal "State: Ignored", @state
+      assert_equal "State: Ignored", @current
     end
   end
 

@@ -18,11 +18,11 @@ class MicroMachine
     transitions_for[event] = transitions
   end
 
-  def trigger event
+  def trigger event, *args
     if trigger?(event)
       @state = transitions_for[event][@state]
       callbacks = @callbacks[@state] + @callbacks[:any]
-      callbacks.each { |callback| callback.call }
+      callbacks.each { |callback| callback.call(*args) }
       true
     else
       false
