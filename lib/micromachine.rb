@@ -20,7 +20,7 @@ class MicroMachine
 
   def trigger event
     if trigger?(event)
-      @state = transitions_for[event][@state] || transitions_for[event][:any]
+      @state = state_for(event)
       callbacks = @callbacks[@state] + @callbacks[:any]
       callbacks.each { |callback| callback.call }
       true
@@ -31,7 +31,7 @@ class MicroMachine
 
   def trigger?(event)
     raise InvalidEvent unless transitions_for.has_key?(event)
-    transitions_for[event][@state] || transitions_for[event][:any] ? true : false
+    state_for(event) ? true : false
   end
 
   def events
@@ -45,4 +45,11 @@ class MicroMachine
   def ==(some_state)
     state == some_state
   end
+
+  private
+
+  def state_for(event)
+    transitions_for[event][state] || transitions_for[event][:any]
+  end
+
 end
