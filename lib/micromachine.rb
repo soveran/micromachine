@@ -19,15 +19,22 @@ class MicroMachine
     transitions_for[event] = transitions
   end
 
-  def trigger(event, opts = {})
+  def trigger(event)
     if trigger?(event)
       @state = transitions_for[event][@state]
       callbacks = @callbacks[@state] + @callbacks[:any]
       callbacks.each { |callback| callback.call }
       true
     else
-      raise InvalidState.new("Event '#{event}' not valid from state '#{@state}'") if opts[:exception]
       false
+    end
+  end
+
+  def trigger!(event)
+    if trigger(event)
+      true
+    else
+      raise InvalidState.new("Event '#{event}' not valid from state '#{@state}'")
     end
   end
 

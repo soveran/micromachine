@@ -41,9 +41,9 @@ class MicroMachineTest < Test::Unit::TestCase
       end
     end
 
-    should "raise an error if event is triggered from/to a non complatible state and exception flag activated" do
+    should "raise an error if event is triggered from/to a non complatible state with trigger!" do
       assert_raise MicroMachine::InvalidState do
-        @machine.trigger(:reset, :exception => true)
+        @machine.trigger!(:reset)
       end
     end
 
