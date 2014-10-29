@@ -1,5 +1,6 @@
 class MicroMachine
   InvalidEvent = Class.new(NoMethodError)
+  InvalidState = Class.new(ArgumentError)
 
   attr :transitions_for
   attr :state
@@ -18,7 +19,7 @@ class MicroMachine
     transitions_for[event] = transitions
   end
 
-  def trigger event
+  def trigger(event)
     if trigger?(event)
       @state = transitions_for[event][@state]
       callbacks = @callbacks[@state] + @callbacks[:any]
@@ -26,6 +27,14 @@ class MicroMachine
       true
     else
       false
+    end
+  end
+
+  def trigger!(event)
+    if trigger(event)
+      true
+    else
+      raise InvalidState.new("Event '#{event}' not valid from state '#{@state}'")
     end
   end
 

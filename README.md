@@ -62,6 +62,14 @@ machine.trigger?(:reset)   #=> true
 machine.state              #=> :ignored
 ```
 
+If you want to force an Exception raise when trying to trigger a event from a
+non compatible state use the `trigger!` method:
+
+``` ruby
+machine.trigger?(:ignore)                     #=> false
+machine.trigger!(:ignore)  #=> MicroMachine::InvalidState raised
+```
+
 It can also have callbacks when entering some state:
 
 ``` ruby
