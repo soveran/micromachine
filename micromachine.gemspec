@@ -6,6 +6,8 @@ Gem::Specification.new do |s|
   s.author = "Michel Martens"
   s.email = "michel@soveran.com"
   s.homepage = "http://github.com/soveran/micromachine"
+  s.license = "MIT"
+
   s.files = Dir["lib/**/*.rb", "README*", "LICENSE", "Rakefile", "*.gemspec", "example/**/*.*"]
   s.add_development_dependency 'contest'
 end
