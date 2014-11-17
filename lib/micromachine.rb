@@ -16,7 +16,7 @@ class MicroMachine
   end
 
   def when(event, transitions)
-    transitions_for[event] = transitions
+    transitions_for[event] = flatten_transitions(transitions)
   end
 
   def trigger(event)
@@ -53,5 +53,15 @@ class MicroMachine
 
   def ==(some_state)
     state == some_state
+  end
+
+  private
+
+  def flatten_transitions(transitions)
+    f_trans = {}
+    transitions.each do |src, dst|
+      [*src].each { |s| f_trans[s] = dst }
+    end
+    f_trans
   end
 end
