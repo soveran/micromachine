@@ -59,7 +59,7 @@ class MicroMachineTest < Test::Unit::TestCase
       @machine = MicroMachine.new(:pending)
       @machine.when(:confirm, :pending => :confirmed)
       @machine.when(:ignore, :pending => :ignored)
-      @machine.when(:reset, :confirmed => :pending, :ignored => :pending)
+      @machine.when(:reset, [:confirmed, :ignored] => :pending)
     end
 
     should "discern transitions" do
