@@ -7,5 +7,6 @@ Gem::Specification.new do |s|
   s.email = "michel@soveran.com"
   s.homepage = "http://github.com/soveran/micromachine"
   s.files = Dir["lib/**/*.rb", "README*", "LICENSE", "Rakefile", "*.gemspec", "example/**/*.*"]
-  s.add_development_dependency 'contest'
+  s.add_development_dependency 'minitest', '~> 5.0'
+  s.add_development_dependency 'rake', '~> 10.4'
 end
