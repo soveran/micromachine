@@ -23,7 +23,7 @@ class MicroMachine
     if trigger?(event)
       @state = transitions_for[event][@state]
       callbacks = @callbacks[@state] + @callbacks[:any]
-      callbacks.each { |callback| callback.call }
+      callbacks.each { |callback| callback.call(event) }
       true
     else
       false

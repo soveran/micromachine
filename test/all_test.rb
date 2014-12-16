@@ -113,6 +113,22 @@ class MicroMachineTest < Test::Unit::TestCase
     end
   end
 
+  context "passing the event name to the callbacks" do
+    setup do
+      @machine = MicroMachine.new(:pending)
+      @machine.when(:confirm, :pending => :confirmed)
+
+      @machine.on(:confirmed) { |event_name| @event_name = event_name }
+      @machine.on(:any)       { |event_name| @any_event_name = [event_name, :any] }
+    end
+
+    should "should execute callbacks when entering a state" do
+      @machine.trigger(:confirm)
+      assert_equal :confirm, @event_name
+      assert_equal [:confirm, :any], @any_event_name
+    end
+  end
+
   context "dealing with from a model callbacks" do
     class Model
       attr_accessor :state
