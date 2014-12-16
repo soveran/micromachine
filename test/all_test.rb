@@ -1,23 +1,21 @@
-require 'test/unit'
-require 'rubygems'
-require 'contest'
+require "minitest/autorun"
 
 require File.dirname(__FILE__) + "/../lib/micromachine"
 
-class MicroMachineTest < Test::Unit::TestCase
-  context "basic interaction" do
-    setup do
+class MicroMachineTest < Minitest::Test
+  describe "basic interaction" do
+    before do
       @machine = MicroMachine.new(:pending)
       @machine.transitions_for[:confirm]  = { :pending => :confirmed }
       @machine.transitions_for[:ignore]   = { :pending => :ignored }
       @machine.transitions_for[:reset]    = { :confirmed => :pending, :ignored => :pending }
     end
 
-    should "have an initial state" do
+    it "should have an initial state" do
       assert_equal :pending, @machine.state
     end
 
-    should "discern transitions" do
+    it "should discern transitions" do
       assert_equal true, @machine.trigger?(:confirm)
       assert_equal true, @machine.trigger(:confirm)
       assert_equal :confirmed, @machine.state
@@ -35,34 +33,32 @@ class MicroMachineTest < Test::Unit::TestCase
       assert_equal :ignored, @machine.state
     end
 
-    should "raise an error if an invalid event is triggered" do
-      assert_raise MicroMachine::InvalidEvent do
+    it "should raise an error if an invalid event is triggered" do
+      assert_raises MicroMachine::InvalidEvent do
         @machine.trigger(:random_event)
       end
     end
 
-    should "raise an error if event is triggered from/to a non complatible state with trigger!" do
-      assert_raise MicroMachine::InvalidState do
+    it "should raise an error if event is triggered from/to a non complatible state with trigger!" do
+      assert_raises MicroMachine::InvalidState do
         @machine.trigger!(:reset)
       end
     end
 
-    should "not raise an error if event is triggered from/to a non complatible state and exception flag not activated" do
-      assert_nothing_raised do
-        @machine.trigger(:reset)
-      end
+    it "should not raise an error if event is triggered from/to a non complatible state and exception flag not activated" do
+      assert_equal false, @machine.trigger(:reset)
     end
   end
 
-  context "using when for defining transitions" do
-    setup do
+  describe "using when for defining transitions" do
+    before do
       @machine = MicroMachine.new(:pending)
       @machine.when(:confirm, :pending => :confirmed)
       @machine.when(:ignore, :pending => :ignored)
       @machine.when(:reset, :confirmed => :pending, :ignored => :pending)
     end
 
-    should "discern transitions" do
+    it "should discern transitions" do
       assert_equal true, @machine.trigger?(:confirm)
       assert_equal true, @machine.trigger(:confirm)
       assert_equal :confirmed, @machine.state
@@ -81,8 +77,8 @@ class MicroMachineTest < Test::Unit::TestCase
     end
   end
 
-  context "dealing with callbacks" do
-    setup do
+  describe "dealing with callbacks" do
+    before do
       @machine = MicroMachine.new(:pending)
       @machine.when(:confirm, :pending => :confirmed)
       @machine.when(:ignore, :pending => :ignored)
@@ -94,7 +90,7 @@ class MicroMachineTest < Test::Unit::TestCase
       @machine.on(:any)       { @current = @state }
     end
 
-    should "execute callbacks when entering a state" do
+    it "should execute callbacks when entering a state" do
       @machine.trigger(:confirm)
       assert_equal "Confirmed", @state
       assert_equal "Confirmed", @current
@@ -113,7 +109,7 @@ class MicroMachineTest < Test::Unit::TestCase
     end
   end
 
-  context "dealing with from a model callbacks" do
+  describe "dealing with from a model callbacks" do
     class Model
       attr_accessor :state
 
@@ -129,11 +125,11 @@ class MicroMachineTest < Test::Unit::TestCase
       end
     end
 
-    setup do
+    before do
       @model = Model.new
     end
 
-    should "execute the callback any when a state" do
+    it "should execute the callback any when a state" do
       @model.machine.trigger(:confirm)
       assert_equal :confirmed, @model.machine.state
       assert_equal :confirmed, @model.state
@@ -152,19 +148,19 @@ class MicroMachineTest < Test::Unit::TestCase
     end
   end
 
-  context 'introspection' do
-    setup do
+  describe 'introspection' do
+    before do
       @machine = MicroMachine.new(:pending)
       @machine.transitions_for[:confirm]  = { :pending => :confirmed }
       @machine.transitions_for[:ignore]   = { :pending => :ignored }
       @machine.transitions_for[:reset]    = { :confirmed => :pending, :ignored => :pending }
     end
 
-    should 'return a list of defined events' do
+    it 'should return a list of defined events' do
       assert_equal [:confirm, :ignore, :reset], @machine.events
     end
 
-    should 'return a list of defined states' do
+    it 'should return a list of defined states' do
       assert_equal [:pending, :confirmed, :ignored], @machine.states
     end
   end
