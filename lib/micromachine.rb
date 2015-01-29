@@ -5,13 +5,13 @@ class MicroMachine
   attr :transitions_for
   attr :state
 
-  def initialize initial_state
+  def initialize(initial_state)
     @state = initial_state
     @transitions_for = Hash.new
     @callbacks = Hash.new { |hash, key| hash[key] = [] }
   end
 
-  def on key, &block
+  def on(key, &block)
     @callbacks[key] << block
   end
 
