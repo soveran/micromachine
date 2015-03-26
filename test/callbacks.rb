@@ -35,10 +35,8 @@ test "passing the event name to the callbacks" do
   machine.when(:confirm, pending: :confirmed)
 
   machine.on(:confirmed) do |event|
-    event_name = event
+    assert_equal(:confirm, event)
   end
 
   machine.trigger(:confirm)
-
-  assert_equal(:confirm, event_name)
 end
