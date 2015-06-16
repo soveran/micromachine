@@ -21,3 +21,12 @@ fsm.trigger(:ignore)
 fsm.trigger(:reset)
 
 fsm.trigger(:ignore)
+
+puts "Should print all states: pending, confirmed, ignored"
+
+puts fsm.states.join ", "
+
+puts "Should print all events: confirm, ignore, reset"
+
+puts fsm.events.join ", "
+
