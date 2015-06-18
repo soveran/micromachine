@@ -21,9 +21,20 @@ class MicroMachine
 
   def trigger(event)
     if trigger?(event)
-      @state = transitions_for[event][@state]
+      old_state, @state = @state, transitions_for[event][@state]
       callbacks = @callbacks[@state] + @callbacks[:any]
-      callbacks.each { |callback| callback.call(event) }
+      callbacks.each { |callback|
+        case callback.arity
+        when 0
+          callback.call
+        when 1
+          callback.call(event)
+        when 2
+          callback.call(event, old_state)
+        else
+          callback.call(event, old_state, @state)
+        end
+      }
       true
     else
       false
