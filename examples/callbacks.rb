@@ -1,6 +1,6 @@
 require 'micromachine'
 
-# This example can be run with ruby -I lib/ example/callbacks.rb
+# This example can be run with ruby -I lib/ ./examples/callbacks.rb
 
 fsm = MicroMachine.new(:pending)
 

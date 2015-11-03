@@ -17,11 +17,3 @@ end
 test "returns an array with the defined states" do |machine|
   assert_equal [:pending, :confirmed, :ignored], machine.states
 end
-
-test "returns false if compared state is not equal to current" do |machine|
-  assert !(machine == :confirmed)
-end
-
-test "returns true if compared state is equal to current" do |machine|
-  assert machine == :pending
-end

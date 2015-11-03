@@ -1,6 +1,6 @@
 require 'micromachine'
 
-# This example can be run with ruby -I lib/ example/advanced.rb
+# This example can be run with ruby -I lib/ ./examples/advanced.rb
 
 fsm = MicroMachine.new(:pending)
 
