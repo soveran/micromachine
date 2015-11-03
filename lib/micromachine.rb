@@ -2,8 +2,8 @@ class MicroMachine
   InvalidEvent = Class.new(NoMethodError)
   InvalidState = Class.new(ArgumentError)
 
-  attr :transitions_for
-  attr :state
+  attr_reader :transitions_for
+  attr_reader :state
 
   def initialize(initial_state)
     @state = initial_state
@@ -20,27 +20,17 @@ class MicroMachine
   end
 
   def trigger(event)
-    if trigger?(event)
-      @state = transitions_for[event][@state]
-      callbacks = @callbacks[@state] + @callbacks[:any]
-      callbacks.each { |callback| callback.call(event) }
-      true
-    else
-      false
-    end
+    trigger?(event) and change(event)
   end
 
   def trigger!(event)
-    if trigger(event)
-      true
-    else
+    trigger(event) or
       raise InvalidState.new("Event '#{event}' not valid from state '#{@state}'")
-    end
   end
 
   def trigger?(event)
     raise InvalidEvent unless transitions_for.has_key?(event)
-    transitions_for[event][state] ? true : false
+    transitions_for[event].has_key?(state)
   end
 
   def events
@@ -48,10 +38,15 @@ class MicroMachine
   end
 
   def states
-    events.map { |e| transitions_for[e].to_a }.flatten.uniq
+    transitions_for.values.map(&:to_a).flatten.uniq
   end
 
-  def ==(some_state)
-    state == some_state
+private
+
+  def change(event)
+    @state = transitions_for[event][@state]
+    callbacks = @callbacks[@state] + @callbacks[:any]
+    callbacks.each { |callback| callback.call(event) }
+    true
   end
 end
