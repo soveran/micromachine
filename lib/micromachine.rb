@@ -12,6 +12,11 @@ class MicroMachine
   end
 
   def on(key, &block)
+    if block.arity > 3
+      raise ArgumentError,
+           "Callback for #{key} have #{block.arity} arguments, but only 3 allowed"
+    end
+
     @callbacks[key] << block
   end
 
@@ -44,9 +49,21 @@ class MicroMachine
 private
 
   def change(event)
-    @state = transitions_for[event][@state]
+    previous_state, @state = @state, transitions_for[event][@state]
+
+    all_arguments = [event, previous_state, state]
+
     callbacks = @callbacks[@state] + @callbacks[:any]
-    callbacks.each { |callback| callback.call(event) }
+    callbacks.each do |callback|
+      case callback.arity
+      when -1
+        callback.call(*all_arguments)
+      when 0..3
+        arguments = all_arguments.take(callback.arity)
+        callback.call(*arguments)
+      end
+    end
+
     true
   end
 end
