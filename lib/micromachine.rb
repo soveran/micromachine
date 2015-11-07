@@ -3,10 +3,12 @@ class MicroMachine
   InvalidState = Class.new(ArgumentError)
 
   attr_reader :transitions_for
-  attr_reader :state, :previous_state
+  attr_reader :previous_state
+  attr_reader :state
 
   def initialize(initial_state)
-    @state, @previous_state = initial_state, nil
+    @previous_state = nil
+    @state = initial_state
     @transitions_for = Hash.new
     @callbacks = Hash.new { |hash, key| hash[key] = [] }
   end
@@ -43,7 +45,8 @@ class MicroMachine
 
 private
   def change(event)
-    @previous_state, @state = @state, transitions_for[event][@state]
+    @previous_state = @state
+    @state = transitions_for[event][@state]
     true
   end
 
