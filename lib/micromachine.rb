@@ -6,17 +6,12 @@ class MicroMachine
   attr_reader :state, :previous_state
 
   def initialize(initial_state)
-    @state = initial_state
+    @state, @previous_state = initial_state, nil
     @transitions_for = Hash.new
     @callbacks = Hash.new { |hash, key| hash[key] = [] }
   end
 
   def on(key, &block)
-    if block.arity > 3
-      raise ArgumentError,
-            "Callback for #{key} have #{block.arity} arguments, but only 3 allowed"
-    end
-
     @callbacks[key] << block
   end
 
@@ -49,25 +44,12 @@ class MicroMachine
 private
   def change(event)
     @previous_state, @state = @state, transitions_for[event][@state]
-
     true
   end
 
   def notify(event)
     callbacks = @callbacks[@state] + @callbacks[:any]
-    callbacks.each do |callback|
-      case callback.arity
-      when 0
-        callback.call
-      when 1
-        callback.call(event)
-      when 2
-        callback.call(event, previous_state)
-      when 3, -1
-        callback.call(event, previous_state, state)
-      end
-    end
-
+    callbacks.each { |callback| callback.call(event) }
     true
   end
 end
