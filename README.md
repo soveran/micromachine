@@ -89,6 +89,13 @@ end
 Note that `:any` is a special key. Using it as a state when declaring
 transitions will give you unexpected results.
 
+Finally, you can list possible events or states:
+
+``` ruby
+machine.events #=> [:confirm, :ignore, :reset]
+machine.states #=> [:new, :confirmed, :ignored]
+```
+
 Check the examples directory for more information.
 
 Adding MicroMachine to your models
