@@ -92,7 +92,13 @@ transitions will give you unexpected results.
 Finally, you can list possible events or states:
 
 ``` ruby
+# All possible events
 machine.events #=> [:confirm, :ignore, :reset]
+
+# All events triggerable from the current state
+machine.triggerable_events #=> [:confirm, :ignore]
+
+# All possible states
 machine.states #=> [:new, :confirmed, :ignored]
 ```
 
