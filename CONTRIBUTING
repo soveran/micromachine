@@ -17,3 +17,8 @@ Please don't start the conversation with a pull request. The code
 should come at last, and even though it may help to convey an idea,
 more often than not it draws the attention to a particular
 implementation.
+
+# Running the Tests
+
+- `gem install cutest`
+- `make`
