@@ -37,6 +37,10 @@ class MicroMachine
     transitions_for.keys
   end
 
+  def triggerable_events
+    events.select { |event| trigger?(event) }
+  end
+
   def states
     transitions_for.values.map(&:to_a).flatten.uniq
   end
