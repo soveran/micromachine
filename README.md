@@ -89,8 +89,9 @@ end
 Note that `:any` is a special key. Using it as a state when declaring
 transitions will give you unexpected results.
 
-You can also pass any data as the second argument for `trigger` and `trigger!`
-which will be passed to every callback as the second argument too:
+You can also pass any data as the second argument for `trigger` and
+`trigger!` which will be passed to every callback as the second
+argument too:
 
 ``` ruby
 machine.on(:any) do |_status, payload|
