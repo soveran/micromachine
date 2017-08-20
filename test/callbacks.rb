@@ -42,3 +42,18 @@ test "passing the event name to the callbacks" do
 
   assert_equal(:confirm, event_name)
 end
+
+test "passing the payload from transition to the callbacks" do
+  received_payload = nil
+
+  machine = MicroMachine.new(:pending)
+  machine.when(:confirm, pending: :confirmed)
+
+  machine.on(:confirmed) do |_event, payload|
+    received_payload = payload
+  end
+
+  machine.trigger(:confirm, foo: :bar)
+
+  assert_equal({ foo: :bar }, received_payload)
+end
